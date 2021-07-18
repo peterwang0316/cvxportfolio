@@ -63,8 +63,16 @@ def values_in_time(obj, t, tau=None):
             if isinstance(obj.index, pd.MultiIndex):
                 return obj.loc[(t, tau)]
             else:
-                return obj.loc[t]
+                obj_last = obj[obj.index <= t]
+                return obj_last.iloc[-1]
+                # return obj.loc[t]
         except KeyError:
+            return obj
+    elif isinstance(obj, pd.Panel):
+        try:
+            obj_last = obj[obj.items < t]
+            return obj_last.iloc[-1]
+        except Exception:
             return obj
 
     return obj
